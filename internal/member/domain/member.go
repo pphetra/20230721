@@ -13,6 +13,7 @@ type Member struct {
 	Id      MemberId
 	Name1   string
 	Name2   string
+	Email   string
 	Type    MemberType
 	Address Address
 }
