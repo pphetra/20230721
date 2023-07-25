@@ -9,8 +9,8 @@ type CommandExecutor struct {
 	uow UnitOfWork
 }
 
-func NewCommandExecutor(uow UnitOfWork) CommandExecutor {
-	return CommandExecutor{
+func NewCommandExecutor(uow UnitOfWork) *CommandExecutor {
+	return &CommandExecutor{
 		uow: uow,
 	}
 }
@@ -18,6 +18,6 @@ func NewCommandExecutor(uow UnitOfWork) CommandExecutor {
 // command will execute in a transaction
 // if command is successful, it will commit the transaction
 // we inject publish function to command so that command can publish event
-func (c CommandExecutor) Execute(command Command) (interface{}, error) {
+func (c *CommandExecutor) Execute(command Command) (interface{}, error) {
 	return c.uow.DoInTransaction(command.Execute)
 }

@@ -7,6 +7,8 @@ import (
 
 	infra_event_bus "taejai/internal/infra/event_bus"
 	infra_unit_of_work "taejai/internal/infra/unit_of_work"
+	member_event_handlers "taejai/internal/member/app/event_handlers"
+	shared_app "taejai/internal/shared/app"
 
 	_ "github.com/lib/pq"
 )
@@ -44,8 +46,11 @@ func main() {
 
 	eventBus := infra_event_bus.NewChannelEventBus()
 	unitOfWork := infra_unit_of_work.NewPostgresUnitOfWork(db, eventBus)
+	commandExecutor := shared_app.NewCommandExecutor(unitOfWork)
+
+	// register event handers
+	eventBus.Subscribe(commandExecutor, member_event_handlers.NewIndividualMemberRegisteredHandler())
 
 	// TODO use unitOfWork
 	fmt.Println(unitOfWork)
-
 }
