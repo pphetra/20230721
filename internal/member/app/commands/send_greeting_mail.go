@@ -2,6 +2,7 @@ package member_app_commands
 
 import (
 	member_domain "taejai/internal/member/domain"
+	member_domain_event "taejai/internal/member/domain/events"
 	shared_app "taejai/internal/shared/app"
 )
 
@@ -28,5 +29,11 @@ func (c SendGreetingMailCommand) Execute(store shared_app.UnitOfWorkStore) (inte
 	if err != nil {
 		return nil, err
 	}
+	store.AddEventToPublish(
+		member_domain_event.NewGreetingMailSendEvent(
+			c.MemberId,
+		),
+	)
+
 	return nil, nil
 }

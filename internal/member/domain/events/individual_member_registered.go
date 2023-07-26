@@ -41,10 +41,6 @@ func (e IndividualMemberRegisteredEvent) GetEventName() string {
 	return IndividualMemberRegisteredEventName
 }
 
-func (e IndividualMemberRegisteredEvent) GetEventId() string {
-	return fmt.Sprintf("member:%d", e.MemberId)
-}
-
 func (e IndividualMemberRegisteredEvent) GetOccuredAt() time.Time {
 	return time.Unix(e.OccuredAt, 0)
 }
@@ -63,10 +59,10 @@ func (e IndividualMemberRegisteredEvent) GetAggregateName() string {
 
 // ==============================================
 func init() {
-	shared_domain.DomainEventReistry.RegisterDomainEventDeSerializerFunction(IndividualMemberRegisteredEventName, fromPayload)
+	shared_domain.DomainEventReistry.RegisterDomainEventDeSerializerFunction(IndividualMemberRegisteredEventName, parseIndividualMemberRegisteredEvent)
 }
 
-func fromPayload(payload []byte) (shared_domain.DomainEvent, error) {
+func parseIndividualMemberRegisteredEvent(payload []byte) (shared_domain.DomainEvent, error) {
 	var event IndividualMemberRegisteredEvent
 	err := json.Unmarshal(payload, &event)
 	if err != nil {
