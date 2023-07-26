@@ -2,15 +2,18 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
+
+	"github.com/gofiber/fiber/v2"
 
 	infra_event_bus "taejai/internal/infra/event_bus"
 	infra_mail "taejai/internal/infra/mail"
 	infra_unit_of_work "taejai/internal/infra/unit_of_work"
 	member_event_handlers "taejai/internal/member/app/event_handlers"
+	member_infra_api_handlers "taejai/internal/member/infra/api_handlers"
 	shared_app "taejai/internal/shared/app"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -38,6 +41,7 @@ func initConnectionString() string {
 	return "postgres://" + dbUser + ":" + dbPassword + "@" + dbHost + ":" + dbPort + "/" + dbName + "?sslmode=disable"
 }
 func main() {
+	godotenv.Load()
 
 	db, err := sql.Open("postgres", initConnectionString())
 	if err != nil {
@@ -54,6 +58,10 @@ func main() {
 	// register event handers
 	eventBus.Subscribe(member_event_handlers.NewSendGreetingMailHandler(mailService))
 
-	// TODO use unitOfWork
-	fmt.Println(unitOfWork)
+	app := fiber.New()
+
+	app.Post("/register/individual", member_infra_api_handlers.NewIndividualRegisterHandler(*commandExecutor))
+
+	app.Listen(":3000")
+
 }
