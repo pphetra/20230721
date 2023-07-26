@@ -15,6 +15,7 @@ type RegisterIndividualMemberCommand struct {
 	AddressLine1      string
 	AddressLine2      string
 	AddressPostalCode string
+	Email             string
 }
 
 func (c RegisterIndividualMemberCommand) GetCommandName() string {
@@ -41,6 +42,7 @@ func (c RegisterIndividualMemberCommand) Execute(store shared_app.UnitOfWorkStor
 		c.FirstName,
 		c.LastName,
 		address,
+		c.Email,
 	)
 	if err != nil {
 		return 0, err

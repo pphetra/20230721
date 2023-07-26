@@ -22,11 +22,13 @@ func NewIndividualMember(
 	firstName string,
 	lastName string,
 	address Address,
+	email string,
 ) (Member, error) {
 	return Member{
 		Name1:   firstName,
 		Name2:   lastName,
 		Type:    Individual,
+		Email:   email,
 		Address: address,
 	}, nil
 }

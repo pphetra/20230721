@@ -14,6 +14,7 @@ type IndividualMemberRegisteredEvent struct {
 	MemberId          member_domain.MemberId `json:"member_id"`
 	FirstName         string                 `json:"first_name"`
 	LastName          string                 `json:"last_name"`
+	Email             string                 `json:"email"`
 	AddressLine1      string                 `json:"address_line_1"`
 	AddressLine2      string                 `json:"address_line_2"`
 	AddressPostalCode string                 `json:"address_postal_code"`
@@ -25,6 +26,7 @@ func NewIndividualMemberRegisteredEvent(member member_domain.Member) IndividualM
 		MemberId:          member.Id,
 		FirstName:         member.Name1,
 		LastName:          member.Name2,
+		Email:             member.Email,
 		AddressLine1:      member.Address.Line1,
 		AddressLine2:      member.Address.Line2,
 		AddressPostalCode: member.Address.PostalCode,

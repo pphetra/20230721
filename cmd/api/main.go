@@ -6,6 +6,7 @@ import (
 	"os"
 
 	infra_event_bus "taejai/internal/infra/event_bus"
+	infra_mail "taejai/internal/infra/mail"
 	infra_unit_of_work "taejai/internal/infra/unit_of_work"
 	member_event_handlers "taejai/internal/member/app/event_handlers"
 	shared_app "taejai/internal/shared/app"
@@ -48,9 +49,10 @@ func main() {
 	unitOfWork := infra_unit_of_work.NewPostgresUnitOfWork(db, eventBus)
 	commandExecutor := shared_app.NewCommandExecutor(unitOfWork)
 	eventBus.SetCommandExecutor(commandExecutor)
+	mailService := infra_mail.NewMailService()
 
 	// register event handers
-	eventBus.Subscribe(member_event_handlers.NewIndividualMemberRegisteredHandler())
+	eventBus.Subscribe(member_event_handlers.NewSendGreetingMailHandler(mailService))
 
 	// TODO use unitOfWork
 	fmt.Println(unitOfWork)
