@@ -4,7 +4,7 @@ import shared_domain "taejai/internal/shared/domain"
 
 type EventBus interface {
 	Publish(event shared_domain.DomainEvent) error
-	Subscribe(commandExecutor *CommandExecutor, handler EventHandler) error
+	Subscribe(handler EventHandler) error
 }
 
 type EventHandler interface {

@@ -10,21 +10,34 @@ import (
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
 )
 
-type ChannelEventBus struct {
-	pubSub *gochannel.GoChannel
+type WatermillEventBus struct {
+	publisher       message.Publisher
+	subscriber      message.Subscriber
+	commandExecutor *shared_app.CommandExecutor
 }
 
-func NewChannelEventBus() *ChannelEventBus {
+func NewWatermillEventBus(publisher message.Publisher, subscriber message.Subscriber) *WatermillEventBus {
+	return &WatermillEventBus{
+		publisher,
+		subscriber,
+		nil,
+	}
+}
+
+func NewGoChannelEventBus() *WatermillEventBus {
 	pubSub := gochannel.NewGoChannel(
 		gochannel.Config{},
 		watermill.NewStdLogger(false, false),
 	)
-	return &ChannelEventBus{
-		pubSub,
-	}
+
+	return NewWatermillEventBus(pubSub, pubSub)
 }
 
-func (b *ChannelEventBus) Publish(event shared_domain.DomainEvent) error {
+func (b *WatermillEventBus) SetCommandExecutor(commandExecutor *shared_app.CommandExecutor) {
+	b.commandExecutor = commandExecutor
+}
+
+func (b *WatermillEventBus) Publish(event shared_domain.DomainEvent) error {
 	payload, err := event.GetPayload()
 	if err != nil {
 		return err
@@ -36,11 +49,11 @@ func (b *ChannelEventBus) Publish(event shared_domain.DomainEvent) error {
 	msg.Metadata.Set("aggregate_name", event.GetAggregateName())
 	msg.Metadata.Set("aggregate_id", event.GetAggregateId())
 
-	return b.pubSub.Publish(event.GetEventName(), msg)
+	return b.publisher.Publish(event.GetEventName(), msg)
 }
 
-func (b *ChannelEventBus) Subscribe(commandExecutor *shared_app.CommandExecutor, handler shared_app.EventHandler) error {
-	messages, err := b.pubSub.Subscribe(context.Background(), handler.GetEventName())
+func (b *WatermillEventBus) Subscribe(handler shared_app.EventHandler) error {
+	messages, err := b.subscriber.Subscribe(context.Background(), handler.GetEventName())
 	if err != nil {
 		return err
 	}
@@ -52,13 +65,15 @@ func (b *ChannelEventBus) Subscribe(commandExecutor *shared_app.CommandExecutor,
 			deserializeFn := shared_domain.DomainEventReistry.GetDomainEventDeSerializerFunction(handler.GetEventName())
 			event, err := deserializeFn(msg.Payload)
 			if err != nil {
-				// TODO log error
+				// TODO handle error
 				continue
 			}
 
-			handler.Handle(commandExecutor, event)
-
-			msg.Ack()
+			err = handler.Handle(b.commandExecutor, event)
+			if err != nil {
+				// TODO handle error
+				continue
+			}
 		}
 	}()
 

@@ -44,12 +44,13 @@ func main() {
 	}
 	defer db.Close()
 
-	eventBus := infra_event_bus.NewChannelEventBus()
+	eventBus := infra_event_bus.NewGoChannelEventBus()
 	unitOfWork := infra_unit_of_work.NewPostgresUnitOfWork(db, eventBus)
 	commandExecutor := shared_app.NewCommandExecutor(unitOfWork)
+	eventBus.SetCommandExecutor(commandExecutor)
 
 	// register event handers
-	eventBus.Subscribe(commandExecutor, member_event_handlers.NewIndividualMemberRegisteredHandler())
+	eventBus.Subscribe(member_event_handlers.NewIndividualMemberRegisteredHandler())
 
 	// TODO use unitOfWork
 	fmt.Println(unitOfWork)
