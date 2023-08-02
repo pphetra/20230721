@@ -5,23 +5,23 @@ import (
 	shared_app "taejai/internal/shared/app"
 )
 
-type PostgresUnitOfWork struct {
+type UnitOfWork struct {
 	db       *sql.DB
 	eventBus shared_app.EventBus
 }
 
-func NewPostgresUnitOfWork(db *sql.DB, eventBus shared_app.EventBus) *PostgresUnitOfWork {
-	return &PostgresUnitOfWork{db: db, eventBus: eventBus}
+func NewUnitOfWork(db *sql.DB, eventBus shared_app.EventBus) *UnitOfWork {
+	return &UnitOfWork{db: db, eventBus: eventBus}
 }
 
-func (u *PostgresUnitOfWork) DoInTransaction(txFunc shared_app.UnitOfWorkTxFunc) (interface{}, error) {
+func (u *UnitOfWork) DoInTransaction(txFunc shared_app.UnitOfWorkTxFunc) (interface{}, error) {
 	tx, err := u.db.Begin()
 	if err != nil {
 		return nil, err
 	}
 	defer tx.Rollback()
 
-	uowStore := NewPostgresUnitOfWorkStore(tx)
+	uowStore := NewUnitOfWorkStore(tx)
 
 	result, err := txFunc(uowStore)
 	if err != nil {

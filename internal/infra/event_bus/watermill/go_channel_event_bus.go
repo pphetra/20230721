@@ -1,4 +1,4 @@
-package infra_event_bus
+package infra_eventbus_watermill
 
 import (
 	"context"
@@ -10,34 +10,34 @@ import (
 	"github.com/ThreeDotsLabs/watermill/pubsub/gochannel"
 )
 
-type WatermillEventBus struct {
+type WatermillGoChannelEventBus struct {
 	publisher       message.Publisher
 	subscriber      message.Subscriber
 	commandExecutor *shared_app.CommandExecutor
 }
 
-func NewWatermillEventBus(publisher message.Publisher, subscriber message.Subscriber) *WatermillEventBus {
-	return &WatermillEventBus{
+func NewWatermillGoChannelEventBus(publisher message.Publisher, subscriber message.Subscriber) *WatermillGoChannelEventBus {
+	return &WatermillGoChannelEventBus{
 		publisher,
 		subscriber,
 		nil,
 	}
 }
 
-func NewGoChannelEventBus() *WatermillEventBus {
+func NewGoChannelEventBus() *WatermillGoChannelEventBus {
 	pubSub := gochannel.NewGoChannel(
 		gochannel.Config{},
 		watermill.NewStdLogger(false, false),
 	)
 
-	return NewWatermillEventBus(pubSub, pubSub)
+	return NewWatermillGoChannelEventBus(pubSub, pubSub)
 }
 
-func (b *WatermillEventBus) SetCommandExecutor(commandExecutor *shared_app.CommandExecutor) {
+func (b *WatermillGoChannelEventBus) SetCommandExecutor(commandExecutor *shared_app.CommandExecutor) {
 	b.commandExecutor = commandExecutor
 }
 
-func (b *WatermillEventBus) Publish(event shared_domain.DomainEvent) error {
+func (b *WatermillGoChannelEventBus) Publish(event shared_domain.DomainEvent) error {
 	payload, err := event.GetPayload()
 	if err != nil {
 		return err
@@ -52,7 +52,7 @@ func (b *WatermillEventBus) Publish(event shared_domain.DomainEvent) error {
 	return b.publisher.Publish(event.GetEventName(), msg)
 }
 
-func (b *WatermillEventBus) Subscribe(handler shared_app.EventHandler) error {
+func (b *WatermillGoChannelEventBus) Subscribe(handler shared_app.EventHandler) error {
 	messages, err := b.subscriber.Subscribe(context.Background(), handler.GetEventName())
 	if err != nil {
 		return err
@@ -74,6 +74,8 @@ func (b *WatermillEventBus) Subscribe(handler shared_app.EventHandler) error {
 				// TODO handle error
 				continue
 			}
+
+			msg.Ack()
 		}
 	}()
 

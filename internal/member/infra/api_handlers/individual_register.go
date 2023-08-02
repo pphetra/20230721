@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func NewIndividualRegisterHandler(commandExecutor shared_app.CommandExecutor) fiber.Handler {
+func NewIndividualRegisterHandler(injector shared_app.Injector) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		// parse request body to json map
 		var body map[string]string
@@ -30,7 +30,7 @@ func NewIndividualRegisterHandler(commandExecutor shared_app.CommandExecutor) fi
 		}
 
 		// execute command
-		ret, err := commandExecutor.Execute(cmd)
+		ret, err := injector.CommandExecutor.Execute(cmd)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{
 				"error": err.Error(),

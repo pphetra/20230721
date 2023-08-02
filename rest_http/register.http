@@ -1,0 +1,15 @@
+@base_url = http://localhost:3000
+
+## register member
+POST {{base_url}}/register/individual HTTP/1.1
+Accept: application/json
+
+{
+    "first_name": "Polawat",
+    "last_name": "phetra",
+    "email": "pphetra@gmail.com",
+    "addr_line1": "1233",
+    "addr_line2": "test"
+}
+
+## get member

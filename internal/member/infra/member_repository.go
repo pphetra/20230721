@@ -3,6 +3,7 @@ package member_infra
 import (
 	"database/sql"
 	member_domain "taejai/internal/member/domain"
+	shared_domain "taejai/internal/shared/domain"
 )
 
 type MemberRepository struct {
@@ -106,4 +107,11 @@ func (r *MemberRepository) Delete(member *member_domain.Member) error {
 		return err
 	}
 	return nil
+}
+
+// =======================
+func init() {
+	shared_domain.RepositoryRegistry.Register("member", func(tx *sql.Tx) interface{} {
+		return NewMemberRepository(tx)
+	})
 }

@@ -8,13 +8,10 @@ import (
 )
 
 type SendGreetingMailHandler struct {
-	mailService shared_app.MailService
 }
 
-func NewSendGreetingMailHandler(mailService shared_app.MailService) *SendGreetingMailHandler {
-	return &SendGreetingMailHandler{
-		mailService: mailService,
-	}
+func NewSendGreetingMailHandler() *SendGreetingMailHandler {
+	return &SendGreetingMailHandler{}
 }
 
 // implement EventHandler interface
@@ -28,10 +25,9 @@ func (h *SendGreetingMailHandler) Handle(commandExecutor *shared_app.CommandExec
 
 	// new sendMailCommand
 	cmd := member_app_commands.SendGreetingMailCommand{
-		MemberId:    registeredEvent.MemberId,
-		FullName:    registeredEvent.FirstName + " " + registeredEvent.LastName,
-		Email:       registeredEvent.Email,
-		MailService: h.mailService,
+		MemberId: registeredEvent.MemberId,
+		FullName: registeredEvent.FirstName + " " + registeredEvent.LastName,
+		Email:    registeredEvent.Email,
 	}
 
 	// execute sendMailCommand
