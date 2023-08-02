@@ -8,10 +8,13 @@ import (
 )
 
 type SendGreetingMailHandler struct {
+	unitOfWork shared_app.UnitOfWork
 }
 
-func NewSendGreetingMailHandler() *SendGreetingMailHandler {
-	return &SendGreetingMailHandler{}
+func NewSendGreetingMailHandler(uow shared_app.UnitOfWork) *SendGreetingMailHandler {
+	return &SendGreetingMailHandler{
+		unitOfWork: uow,
+	}
 }
 
 // implement EventHandler interface
@@ -20,7 +23,7 @@ func (h *SendGreetingMailHandler) GetEventName() string {
 }
 
 // implement EventHandler interface
-func (h *SendGreetingMailHandler) Handle(commandExecutor *shared_app.CommandExecutor, event shared_domain.DomainEvent) error {
+func (h *SendGreetingMailHandler) Handle(event shared_domain.DomainEvent) error {
 	registeredEvent := event.(member_domain_event.IndividualMemberRegisteredEvent)
 
 	// new sendMailCommand
@@ -31,7 +34,7 @@ func (h *SendGreetingMailHandler) Handle(commandExecutor *shared_app.CommandExec
 	}
 
 	// execute sendMailCommand
-	_, err := commandExecutor.Execute(cmd)
+	_, err := h.unitOfWork.GetCommandExecutor().Execute(cmd)
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,6 @@ import (
 	infra_unit_of_work "taejai/internal/infra/unit_of_work"
 	member_event_handlers "taejai/internal/member/app/event_handlers"
 	member_infra_api_handlers "taejai/internal/member/infra/api_handlers"
-	shared_app "taejai/internal/shared/app"
 
 	_ "taejai/internal/infra/mail"
 	_ "taejai/internal/member/infra"
@@ -28,19 +27,13 @@ func main() {
 
 	eventBus := infra_eventbus_watermill.NewGoChannelEventBus()
 	unitOfWork := infra_unit_of_work.NewUnitOfWork(db, eventBus)
-	eventBus.SetCommandExecutor(unitOfWork.GetCommandExecutor())
-
-	injector := shared_app.Injector{
-		UnitOfWork: unitOfWork,
-		EventBus:   eventBus,
-	}
 
 	// register event handers
-	eventBus.Subscribe(member_event_handlers.NewSendGreetingMailHandler())
+	eventBus.Subscribe(member_event_handlers.NewSendGreetingMailHandler(unitOfWork))
 
 	app := fiber.New()
 
-	app.Post("/register/individual", member_infra_api_handlers.NewIndividualRegisterHandler(injector))
+	app.Post("/register/individual", member_infra_api_handlers.NewIndividualRegisterHandler(unitOfWork))
 
 	app.Listen(":3000")
 

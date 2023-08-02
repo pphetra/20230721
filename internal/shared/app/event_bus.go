@@ -9,5 +9,5 @@ type EventBus interface {
 
 type EventHandler interface {
 	GetEventName() string
-	Handle(commandExecutor *CommandExecutor, event shared_domain.DomainEvent) error
+	Handle(event shared_domain.DomainEvent) error
 }

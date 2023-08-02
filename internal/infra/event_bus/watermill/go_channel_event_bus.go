@@ -11,16 +11,14 @@ import (
 )
 
 type WatermillGoChannelEventBus struct {
-	publisher       message.Publisher
-	subscriber      message.Subscriber
-	commandExecutor *shared_app.CommandExecutor
+	publisher  message.Publisher
+	subscriber message.Subscriber
 }
 
 func NewWatermillGoChannelEventBus(publisher message.Publisher, subscriber message.Subscriber) *WatermillGoChannelEventBus {
 	return &WatermillGoChannelEventBus{
 		publisher,
 		subscriber,
-		nil,
 	}
 }
 
@@ -31,10 +29,6 @@ func NewGoChannelEventBus() *WatermillGoChannelEventBus {
 	)
 
 	return NewWatermillGoChannelEventBus(pubSub, pubSub)
-}
-
-func (b *WatermillGoChannelEventBus) SetCommandExecutor(commandExecutor *shared_app.CommandExecutor) {
-	b.commandExecutor = commandExecutor
 }
 
 func (b *WatermillGoChannelEventBus) Publish(event shared_domain.DomainEvent) error {
@@ -69,7 +63,7 @@ func (b *WatermillGoChannelEventBus) Subscribe(handler shared_app.EventHandler) 
 				continue
 			}
 
-			err = handler.Handle(b.commandExecutor, event)
+			err = handler.Handle(event)
 			if err != nil {
 				// TODO handle error
 				continue
