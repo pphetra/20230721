@@ -33,3 +33,7 @@ type MockUnitOfWork struct {
 func (m *MockUnitOfWork) DoInTransaction(fn UnitOfWorkTxFunc) (interface{}, error) {
 	return fn(m.UnitOfWorkStore)
 }
+
+func (m *MockUnitOfWork) GetCommandExecutor() *CommandExecutor {
+	return NewCommandExecutor(m)
+}

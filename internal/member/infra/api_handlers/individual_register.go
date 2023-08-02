@@ -30,7 +30,7 @@ func NewIndividualRegisterHandler(injector shared_app.Injector) fiber.Handler {
 		}
 
 		// execute command
-		ret, err := injector.CommandExecutor.Execute(cmd)
+		ret, err := injector.UnitOfWork.GetCommandExecutor().Execute(cmd)
 		if err != nil {
 			return c.Status(500).JSON(fiber.Map{
 				"error": err.Error(),

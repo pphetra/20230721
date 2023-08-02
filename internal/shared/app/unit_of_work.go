@@ -13,4 +13,5 @@ type UnitOfWorkTxFunc func(store UnitOfWorkStore) (interface{}, error)
 
 type UnitOfWork interface {
 	DoInTransaction(UnitOfWorkTxFunc) (interface{}, error)
+	GetCommandExecutor() *CommandExecutor
 }

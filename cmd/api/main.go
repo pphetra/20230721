@@ -28,13 +28,11 @@ func main() {
 
 	eventBus := infra_eventbus_watermill.NewGoChannelEventBus()
 	unitOfWork := infra_unit_of_work.NewUnitOfWork(db, eventBus)
-	commandExecutor := shared_app.NewCommandExecutor(unitOfWork)
-	eventBus.SetCommandExecutor(commandExecutor)
+	eventBus.SetCommandExecutor(unitOfWork.GetCommandExecutor())
 
 	injector := shared_app.Injector{
-		CommandExecutor: commandExecutor,
-		UnitOfWork:      unitOfWork,
-		EventBus:        eventBus,
+		UnitOfWork: unitOfWork,
+		EventBus:   eventBus,
 	}
 
 	// register event handers

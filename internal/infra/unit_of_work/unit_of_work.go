@@ -6,12 +6,15 @@ import (
 )
 
 type UnitOfWork struct {
-	db       *sql.DB
-	eventBus shared_app.EventBus
+	db              *sql.DB
+	eventBus        shared_app.EventBus
+	commandExecutor *shared_app.CommandExecutor
 }
 
 func NewUnitOfWork(db *sql.DB, eventBus shared_app.EventBus) *UnitOfWork {
-	return &UnitOfWork{db: db, eventBus: eventBus}
+	uow := &UnitOfWork{db: db, eventBus: eventBus}
+	uow.commandExecutor = shared_app.NewCommandExecutor(uow)
+	return uow
 }
 
 func (u *UnitOfWork) DoInTransaction(txFunc shared_app.UnitOfWorkTxFunc) (interface{}, error) {
@@ -40,4 +43,8 @@ func (u *UnitOfWork) DoInTransaction(txFunc shared_app.UnitOfWorkTxFunc) (interf
 	}
 
 	return result, nil
+}
+
+func (u *UnitOfWork) GetCommandExecutor() *shared_app.CommandExecutor {
+	return u.commandExecutor
 }
