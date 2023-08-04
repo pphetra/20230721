@@ -1,5 +1,7 @@
 package member_domain
 
+import "time"
+
 type MemberType int
 
 const (
@@ -10,12 +12,13 @@ const (
 type MemberId int64
 
 type Member struct {
-	Id      MemberId
-	Name1   string
-	Name2   string
-	Email   string
-	Type    MemberType
-	Address Address
+	Id       MemberId
+	Name1    string
+	Name2    string
+	Email    string
+	Type     MemberType
+	Address  Address
+	MailSend *time.Time
 }
 
 func NewIndividualMember(

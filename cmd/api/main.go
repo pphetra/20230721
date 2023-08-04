@@ -34,7 +34,8 @@ func main() {
 	shared_domain.RepositoryRegistry.Register("member", member_infra.NewMemberRepositoryFactory())
 
 	// register event handers
-	eventBus.Subscribe(member_event_handlers.NewSendGreetingMailHandler(unitOfWork))
+	eventBus.Subscribe(member_event_handlers.NewIndividualMemberRegisteredHandler(unitOfWork))
+	eventBus.Subscribe(member_event_handlers.NewGreetingMailSendHandler(unitOfWork))
 
 	app := fiber.New()
 

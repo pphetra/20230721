@@ -18,6 +18,9 @@ type GreetingMailSendEvent struct {
 func NewGreetingMailSendEvent(memberId member.MemberId) GreetingMailSendEvent {
 	return GreetingMailSendEvent{
 		MemberId: memberId,
+		BaseDomainEvent: shared_domain.BaseDomainEvent{
+			OccuredAt: time.Now().Unix(),
+		},
 	}
 }
 

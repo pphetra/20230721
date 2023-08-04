@@ -3,13 +3,15 @@
 ## register member
 POST {{base_url}}/register/individual HTTP/1.1
 Accept: application/json
+Content-Type: application/json
 
 {
-    "first_name": "Polawat",
-    "last_name": "phetra",
-    "email": "pphetra@gmail.com",
-    "addr_line1": "1233",
-    "addr_line2": "test"
+  "first_name": "polawat",
+  "last_name": "phetra",
+  "email": "pphetra@gmail.com",
+  "address_line_1": "141/3",
+  "address_line_2": "bangkok",
+  "address_postal_code": "10900"
 }
 
 ## get member

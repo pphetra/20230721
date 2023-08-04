@@ -7,23 +7,23 @@ import (
 	shared_domain "taejai/internal/shared/domain"
 )
 
-type SendGreetingMailHandler struct {
+type IndividualMemberRegisteredHandler struct {
 	unitOfWork shared_app.UnitOfWork
 }
 
-func NewSendGreetingMailHandler(uow shared_app.UnitOfWork) *SendGreetingMailHandler {
-	return &SendGreetingMailHandler{
+func NewIndividualMemberRegisteredHandler(uow shared_app.UnitOfWork) *IndividualMemberRegisteredHandler {
+	return &IndividualMemberRegisteredHandler{
 		unitOfWork: uow,
 	}
 }
 
 // implement EventHandler interface
-func (h *SendGreetingMailHandler) GetEventName() string {
+func (h *IndividualMemberRegisteredHandler) GetEventName() string {
 	return member_domain_event.IndividualMemberRegisteredEventName
 }
 
 // implement EventHandler interface
-func (h *SendGreetingMailHandler) Handle(event shared_domain.DomainEvent) error {
+func (h *IndividualMemberRegisteredHandler) Handle(event shared_domain.DomainEvent) error {
 	registeredEvent := event.(member_domain_event.IndividualMemberRegisteredEvent)
 
 	// new sendMailCommand
